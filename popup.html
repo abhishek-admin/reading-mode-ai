@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading Mode AI</title>
+  <link rel="stylesheet" href="popup.css">
+  <style>:root { --accent: #a78bfa; }</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <span class="logo">✦</span>
+        <h1>Reading Mode AI</h1>
+      </div>
+      <div class="header-right">
+        <span class="badge">Gemini</span>
+        <button id="settings-btn" class="settings-btn" title="API Settings">⚙</button>
+      </div>
+    </div>
+
+    <div id="main-content">
+      <p class="subtitle">Strip the noise. Read what matters.</p>
+      <button id="action-btn" class="primary-btn">
+        <span class="btn-text">📖 Enter Reading Mode</span>
+      </button>
+    </div>
+
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <p class="loading-text">Annotating your article...</p>
+    </div>
+
+    <div id="result" class="hidden">
+      <div class="result-header">
+        <span>Article Analysis</span>
+        <div class="result-actions">
+          <button id="copy-btn" class="copy-btn" title="Copy to clipboard">📋</button>
+        </div>
+      </div>
+      <div id="result-content" class="result-content"></div>
+      <button id="rerun-btn" class="rerun-btn">↻ Re-analyze</button>
+    </div>
+
+    <div id="error" class="hidden">
+      <p class="error-text" id="error-message">Something went wrong.</p>
+      <button id="retry-btn" class="secondary-btn">Retry</button>
+    </div>
+
+    <div id="settings-panel" class="hidden">
+      <div class="settings-header">
+        <span>API Settings</span>
+        <button id="settings-close" class="settings-close">✕</button>
+      </div>
+      <div class="settings-body">
+        <label class="settings-label">Gemini API Key</label>
+        <div class="settings-row">
+          <input type="password" id="gemini-key-input" class="settings-input" placeholder="Paste Gemini key..." />
+          <button id="toggle-gemini-key" class="toggle-vis-btn">👁</button>
+        </div>
+        <label class="settings-label">OpenRouter API Key <span class="settings-hint">(fallback)</span></label>
+        <div class="settings-row">
+          <input type="password" id="openrouter-key-input" class="settings-input" placeholder="Paste OpenRouter key..." />
+          <button id="toggle-openrouter-key" class="toggle-vis-btn">👁</button>
+        </div>
+        <div class="settings-actions">
+          <button id="save-keys-btn" class="primary-btn" style="padding:8px 12px;font-size:12px;">Save Keys</button>
+          <button id="clear-keys-btn" class="secondary-btn">Clear All Keys</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Built by <a href="https://x.com/happy_ships" target="_blank">@happy_ships</a></span>
+      <span>Day 2/180</span>
+    </div>
+  </div>
+
+  <script src="gemini.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
