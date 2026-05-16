@@ -35,4 +35,4 @@ A Chrome extension that automatically annotates any article with AI-powered insi
 
 ---
 
-Built by [@happy_ships](https://x.com/happy_ships) · Day 3/180
+Built by [@happy_ships](https://x.com/happy_ships) · Day 2/180
