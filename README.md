@@ -4,7 +4,7 @@
 
 A Chrome extension that automatically annotates any article with AI-powered insights — no typing required. One click gives you a TLDR, the 3 most important sentences verbatim, claims to fact-check, and a quality score.
 
-![Demo](demo.gif)
+![Demo](readmodegif.gif)
 
 ## What it does
 
