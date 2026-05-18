@@ -5,7 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reading Mode AI</title>
   <link rel="stylesheet" href="popup.css">
-  <style>:root { --accent: #a78bfa; }</style>
+  <style>
+    :root { --accent: #a78bfa; }
+
+    .mode-selector {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    .mode-pill {
+      flex: 1;
+      padding: 5px 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #666680;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      text-align: center;
+    }
+
+    .mode-pill:hover {
+      color: #9090b0;
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .mode-pill.active {
+      color: var(--accent-light);
+      background: var(--accent-dim);
+      border-color: var(--accent-border);
+    }
+
+    .mode-pill .pill-icon {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .feature-strip {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .feature-tag {
+      font-size: 10px;
+      color: #555568;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.2px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -22,6 +78,18 @@
 
     <div id="main-content">
       <p class="subtitle">Strip the noise. Read what matters.</p>
+      <div class="mode-selector">
+        <button class="mode-pill active" data-mode="full"><span class="pill-icon">🔍</span>Deep Read</button>
+        <button class="mode-pill" data-mode="brief"><span class="pill-icon">⚡</span>Quick Take</button>
+        <button class="mode-pill" data-mode="critical"><span class="pill-icon">🎯</span>Fact Check</button>
+      </div>
+      <div class="feature-strip">
+        <span class="feature-tag">⚡ TLDR</span>
+        <span class="feature-tag">🔑 Key Lines</span>
+        <span class="feature-tag">⚠️ Fact Check</span>
+        <span class="feature-tag">📊 Quality Score</span>
+        <span class="feature-tag">💡 What's Missing</span>
+      </div>
       <button id="action-btn" class="primary-btn">
         <span class="btn-text">📖 Enter Reading Mode</span>
       </button>
