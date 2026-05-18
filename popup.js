@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+  let currentMode = 'full';
+
+  document.querySelectorAll('.mode-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentMode = pill.dataset.mode;
+    });
+  });
+
   const actionBtn = document.getElementById('action-btn');
   const retryBtn = document.getElementById('retry-btn');
   const copyBtn = document.getElementById('copy-btn');
@@ -147,37 +157,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const domain = new URL(page.url).hostname.replace('www.', '');
 
       // Phase 1: Instant local preview
-      showResult(`## 📖 ${page.title.slice(0, 60)}\n\n**${domain}** · ${wordCount.toLocaleString()} words · ~${readTime} min read\n\n*Gemini is finding the key sentences...*`, true);
+      const modeLabel = currentMode === 'brief' ? 'Quick Take' : currentMode === 'critical' ? 'Fact Check' : 'Deep Read';
+      showResult(`## 📖 ${page.title.slice(0, 60)}\n\n**${domain}** · ${wordCount.toLocaleString()} words · ~${readTime} min read\n\n*Running ${modeLabel} analysis...*`, true);
 
-      // Phase 2: Full AI annotation
-      const fullPrompt = `Article: "${page.title}"
-URL: ${page.url}
-
-Full text:
-${page.text.slice(0, 8000)}
-
-Analyze this article and provide:
-
-## ⚡ TLDR (2 sentences max)
-[The entire article's point, brutally condensed]
-
-## 🔑 3 Key Sentences
-Quote the 3 most important sentences from the article verbatim (under 30 words each). These are the ones worth highlighting.
-1. "..."
-2. "..."
-3. "..."
-
-## ⚠️ Claims to Fact-Check
-List 2-3 specific claims in the article that seem unverified or that a skeptical reader should verify. Quote the claim, then explain why it needs checking.
-
-## 📊 Article Quality Score
-- **Bias level:** X/10 (0=neutral, 10=highly biased)
-- **Evidence quality:** X/10
-- **Reading difficulty:** [Easy / Medium / Hard]
-- **Estimated reading time:** ${readTime} min
-
-## 💡 What's Missing
-One important angle or counterpoint the article didn't address.`;
+      // Phase 2: Mode-specific AI analysis
+      const modePrompts = {
+        brief: `Article: "${page.title}"\n\nText:\n${page.text.slice(0, 5000)}\n\nGive a brutally brief analysis:\n\n## ⚡ TLDR\n1-2 sentences only. The entire point of the article.\n\n## 🔑 Top 3 Sentences\nQuote the 3 most important sentences verbatim.\n\n## ⏱ Worth Reading?\nYes / Skim / Skip — and one sentence why.`,
+        critical: `Article: "${page.title}"\nURL: ${page.url}\n\nText:\n${page.text.slice(0, 8000)}\n\nFact-check this article:\n\n## ⚠️ Claims to Verify\nList 4-5 specific claims that need fact-checking. Quote each claim, then explain what's suspicious or unverified.\n\n## 📰 Source & Bias Check\n- **Publication bias:** Left / Center / Right — evidence for this?\n- **Missing perspectives:** Who's not being heard?\n- **Conflicts of interest:** Any to flag?\n\n## ✅ What Checks Out\n2-3 things in the article that appear accurate and well-sourced.`,
+        full: `Article: "${page.title}"\nURL: ${page.url}\n\nFull text:\n${page.text.slice(0, 8000)}\n\nAnalyze this article and provide:\n\n## ⚡ TLDR (2 sentences max)\n[The entire article's point, brutally condensed]\n\n## 🔑 3 Key Sentences\nQuote the 3 most important sentences from the article verbatim (under 30 words each). These are the ones worth highlighting.\n1. "..."\n2. "..."\n3. "..."\n\n## ⚠️ Claims to Fact-Check\nList 2-3 specific claims in the article that seem unverified or that a skeptical reader should verify. Quote the claim, then explain why it needs checking.\n\n## 📊 Article Quality Score\n- **Bias level:** X/10 (0=neutral, 10=highly biased)\n- **Evidence quality:** X/10\n- **Reading difficulty:** [Easy / Medium / Hard]\n- **Estimated reading time:** ${readTime} min\n\n## 💡 What's Missing\nOne important angle or counterpoint the article didn't address.`,
+      };
+      const fullPrompt = modePrompts[currentMode] || modePrompts.full;
 
       chrome.runtime.sendMessage(
         {
