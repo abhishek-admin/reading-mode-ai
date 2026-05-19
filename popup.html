@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="popup.css">
   <style>
     :root { --accent: #a78bfa; }
+    #onboarding { padding: 4px 0; }
+    .onboarding-title { font-size: 14px; font-weight: 600; color: #e0e0e8; margin-bottom: 8px; }
+    .onboarding-desc { font-size: 12px; color: #8888a0; line-height: 1.6; margin-bottom: 14px; }
+    .onboarding-desc strong { color: #b0b0c8; }
 
     .mode-selector {
       display: flex;
@@ -114,6 +118,22 @@
     <div id="error" class="hidden">
       <p class="error-text" id="error-message">Something went wrong.</p>
       <button id="retry-btn" class="secondary-btn">Retry</button>
+    </div>
+
+    <div id="onboarding" class="hidden">
+      <p class="onboarding-title">👋 Welcome! Add your API key</p>
+      <p class="onboarding-desc">Enter a <strong>Gemini</strong> or <strong>OpenRouter</strong> key to get started. Either one works — you don't need both.</p>
+      <label class="settings-label">Gemini API Key <span class="settings-hint">— <a href="https://aistudio.google.com/app/apikey" target="_blank">Get free key ↗</a></span></label>
+      <div class="settings-row">
+        <input type="password" id="onboard-gemini-input" class="settings-input" placeholder="AIza..." />
+        <button id="onboard-toggle-gemini" class="toggle-vis-btn">👁</button>
+      </div>
+      <label class="settings-label">OpenRouter API Key <span class="settings-hint">— <a href="https://openrouter.ai/keys" target="_blank">Get key ↗</a></span></label>
+      <div class="settings-row">
+        <input type="password" id="onboard-openrouter-input" class="settings-input" placeholder="sk-or-..." />
+        <button id="onboard-toggle-openrouter" class="toggle-vis-btn">👁</button>
+      </div>
+      <button id="onboard-save-btn" class="primary-btn" style="margin-top:4px;">Get Started →</button>
     </div>
 
     <div id="settings-panel" class="hidden">

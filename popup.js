@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleGeminiKey = document.getElementById('toggle-gemini-key');
   const toggleOpenrouterKey = document.getElementById('toggle-openrouter-key');
 
+  const onboarding = document.getElementById('onboarding');
+  const onboardGeminiInput = document.getElementById('onboard-gemini-input');
+  const onboardOpenrouterInput = document.getElementById('onboard-openrouter-input');
+  const onboardSaveBtn = document.getElementById('onboard-save-btn');
+
   // ---- Markdown → HTML ----
 
   function renderMarkdown(text) {
@@ -97,17 +102,65 @@ document.addEventListener('DOMContentLoaded', () => {
     showState('error');
   }
 
+  // ---- First-run onboarding ----
+
+  function showOnboarding() {
+    onboarding.classList.remove('hidden');
+    mainContent.classList.add('hidden');
+    loading.classList.add('hidden');
+    result.classList.add('hidden');
+    error.classList.add('hidden');
+  }
+
+  function hideOnboarding() {
+    onboarding.classList.add('hidden');
+  }
+
+  document.getElementById('onboard-toggle-gemini').addEventListener('click', () => {
+    onboardGeminiInput.type = onboardGeminiInput.type === 'password' ? 'text' : 'password';
+  });
+  document.getElementById('onboard-toggle-openrouter').addEventListener('click', () => {
+    onboardOpenrouterInput.type = onboardOpenrouterInput.type === 'password' ? 'text' : 'password';
+  });
+
+  onboardSaveBtn.addEventListener('click', () => {
+    const gk = onboardGeminiInput.value.trim();
+    const ok = onboardOpenrouterInput.value.trim();
+    if (!gk && !ok) {
+      onboardSaveBtn.textContent = '⚠️ Enter at least one key';
+      setTimeout(() => { onboardSaveBtn.textContent = 'Get Started →'; }, 2000);
+      return;
+    }
+    const updates = {};
+    if (gk) updates.gemini_api_key = gk;
+    if (ok) updates.openrouter_api_key = ok;
+    chrome.storage.local.set(updates, () => {
+      hideOnboarding();
+      initApp();
+    });
+  });
+
   // ---- Restore cache on popup open ----
 
-  chrome.storage.session.get(['cached_result', 'cached_at'], (data) => {
-    if (data.cached_result && data.cached_at) {
-      if (Date.now() - data.cached_at < 10 * 60 * 1000) {
-        resultContent.innerHTML = renderMarkdown(data.cached_result);
-        showState('result');
-        return;
+  function initApp() {
+    chrome.storage.session.get(['cached_result', 'cached_at'], (data) => {
+      if (data.cached_result && data.cached_at) {
+        if (Date.now() - data.cached_at < 10 * 60 * 1000) {
+          resultContent.innerHTML = renderMarkdown(data.cached_result);
+          showState('result');
+          return;
+        }
       }
+      showState('idle');
+    });
+  }
+
+  chrome.storage.local.get(['gemini_api_key', 'openrouter_api_key'], (keys) => {
+    if (!keys.gemini_api_key && !keys.openrouter_api_key) {
+      showOnboarding();
+    } else {
+      initApp();
     }
-    showState('idle');
   });
 
   // ============================================
