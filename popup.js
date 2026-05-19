@@ -93,7 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
     resultContent.innerHTML = badge + renderMarkdown(text);
     showState('result');
     if (!isProgressive) {
-      chrome.storage.session.set({ cached_result: text, cached_at: Date.now() });
+      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+        chrome.storage.session.set({ cached_result: text, cached_at: Date.now(), cached_url: tab?.url || '' });
+      });
     }
   }
 
@@ -143,15 +145,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Restore cache on popup open ----
 
   function initApp() {
-    chrome.storage.session.get(['cached_result', 'cached_at'], (data) => {
-      if (data.cached_result && data.cached_at) {
-        if (Date.now() - data.cached_at < 10 * 60 * 1000) {
+    chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+      const currentUrl = tab?.url || '';
+      chrome.storage.session.get(['cached_result', 'cached_at', 'cached_url'], (data) => {
+        if (
+          data.cached_result &&
+          data.cached_at &&
+          data.cached_url === currentUrl &&
+          Date.now() - data.cached_at < 10 * 60 * 1000
+        ) {
           resultContent.innerHTML = renderMarkdown(data.cached_result);
           showState('result');
           return;
         }
-      }
-      showState('idle');
+        chrome.storage.session.remove(['cached_result', 'cached_at', 'cached_url']);
+        showState('idle');
+      });
     });
   }
 
